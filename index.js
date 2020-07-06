@@ -20,15 +20,20 @@ const app = express()
 app.use(bodyParser.json())
 app.use(cors({
   origin (origin, callback) {
-    // 開發環境，允許
-    if (process.env.ALLOW_CORS === 'true') {
-      callback(null, true)
-    } else if (origin.includes('github')) {
-      // 非開發環境，但是從 github 過來，允許
-      callback(null, true)
-    } else {
-      // 不是開發也不是從 github 過來，拒絕
-      callback(new Error('Not allowed'), false)
+    // 直接開網頁，不是 ajax 時，origin 是 undefined
+    if(origin===undefined){
+      callback(null,true)
+    }else{
+      // 開發環境，允許
+      if (process.env.ALLOW_CORS === 'true') {
+        callback(null, true)
+      } else if (origin.includes('github')) {
+        // 非開發環境，但是從 github 過來，允許
+        callback(null, true)
+      } else {
+        // 不是開發也不是從 github 過來，拒絕
+        callback(new Error('Not allowed'), false)
+      }
     }
   },
   credentials: true
